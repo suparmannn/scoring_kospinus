@@ -277,9 +277,10 @@ with col2:
 
 
 # --- PROSES SCORING ---
+
 if st.button("RUN SCORING KOSPINUS", type="primary"):
-    # Cukup panggil seperti ini, karena fungsinya sudah ada di atas (Global)
-    p1, w1 = get_pt_wt('dsr', 25) # Default 25% (Poin 5)
+    # 1. FIX: Gunakan dsr_calc, bukan angka 25
+    p1, w1 = get_pt_wt('dsr', dsr_calc) 
     p2, w2 = get_pt_wt('kepemilikan_rumah', rumah_val)
     p3, w3 = get_pt_wt('daya_listrik', listrik_val)
     p4, w4 = get_pt_wt('usia', usia_val)
@@ -288,44 +289,48 @@ if st.button("RUN SCORING KOSPINUS", type="primary"):
 
     total_score = (p1*w1 + p2*w2 + p3*w3 + p4*w4 + p5*w5 + p6*w6) * 100
     
-    # 2. Get Kategori UMI & CBI
+    # 2. Tentukan Kategori UMI & CBI
     u_cat = "1"; c_cat = "1"
     for r in MASTER['category_ranges']['umi']:
         if r['min'] <= total_score <= r['max']: u_cat = r['cat']
     for r in MASTER['category_ranges']['cbi']:
         if r['min'] <= cbi_score_input <= r['max']: c_cat = r['cat']
 
-    # 3. Final Decision
-    decision = MASTER['matrix_approval'][u_cat][c_cat]
-    color = "#22c55e" if "Approve 1" in decision else ("#eab308" if "Approve 2" in decision else "#ef4444")
+    # 3. LOGIKA KEPUTUSAN (REVISI: CEK FATAL SCORE DULU)
+    if is_fatal:
+        decision = "REJECTED (Fatal Score)"
+        color = "#ef4444" # Merah
+    else:
+        decision = MASTER['matrix_approval'][u_cat][c_cat]
+        color = "#22c55e" if "Approve 1" in decision else ("#eab308" if "Approve 2" in decision else "#ef4444")
 
     # --- OUTPUT DISPLAY ---
     st.divider()
     res_l, res_r = st.columns([1, 2])
     with res_l:
-        l_res = load_lottie_local("Success.json" if "Approve" in decision else "Warning.json")
+        # Animasi berubah jadi Warning jika is_fatal
+        path_anim = "Warning.json" if (is_fatal or "Reject" in decision) else "Success.json"
+        l_res = load_lottie_local(path_anim)
         if l_res: st_lottie(l_res, height=250)
 
     with res_r:
-        # LOGIKA WARNA STATUS
-        color = "#22c55e" if "Approve 1" in decision else ("#eab308" if "Approve 2" in decision else "#ef4444")
-        
         st.markdown(f"""
             <div class="report-card" style="border-left-color: {color};">
-                <p style='margin:0; color:#64748b; font-weight:bold;'>HASIL PUTUSAN MATRIX:</p>
-                <h1 style='color: {color}; font-size: 3.5rem; margin:10px 0;'>{decision}</h1>
+                <p style='margin:0; color:#64748b; font-weight:bold;'>HASIL PUTUSAN FINAL:</p>
+                <h1 style='color: {color}; font-size: 3rem; margin:10px 0;'>{decision}</h1>
                 <hr>
                 <div style='display: flex; gap: 10px; margin-top:15px;'>
-                    <span class="badge-cat bg-umi">Kategori UMI: {u_cat}</span>
-                    <span class="badge-cat bg-cbi">Kategori CBI: {c_cat}</span>
+                    <span class="badge-cat bg-umi">UMI: Kat {u_cat}</span>
+                    <span class="badge-cat bg-cbi">CBI: Kat {c_cat}</span>
                 </div>
                 <p style='margin-top:10px; font-size:0.9rem; color:#1e293b;'>
-                    Titik perpotongan antara Skor Internal <b>({round(total_score, 0)})</b> 
-                    dan Skor Eksternal <b>({cbi_score_input})</b>.
+                    Skor Internal: <b>{round(total_score, 0)}</b> | Skor Eksternal: <b>{cbi_score_input}</b>
                 </p>
+                {"<p style='color:#ef4444; font-weight:bold;'>⚠️ REJECT KARENA MELEBIHI BATAS DPD/TUNGGAKAN</p>" if is_fatal else ""}
             </div>
         """, unsafe_allow_html=True)
 
+  
     # Tabel Rincian dengan pembulatan 2 desimal dan format :g (menghilangkan nol mubazir)
     df_det = pd.DataFrame([
         {"Parameter": "Daya Listrik", "Poin": p3, "Skor Final": f"{round(p3*w3*100, 2):g}"},
