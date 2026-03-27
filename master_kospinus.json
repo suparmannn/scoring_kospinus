@@ -1,0 +1,80 @@
+{
+    "metadata": {
+        "project": "Kospinus UMI Scoring System",
+        "version": "1.0",
+        "last_update": "2026-03-27",
+        "author": "M.Suparman",
+        "office": "Kospinus"
+    },
+    "scoring_rules": {
+        "dsr": [
+            {"desc": "≤ 30%", "min": 0, "max": 30, "point": 5, "weight": 0.15},
+            {"desc": "31% – 40%", "min": 30.01, "max": 40, "point": 4, "weight": 0.15},
+            {"desc": "41% – 50%", "min": 40.01, "max": 50, "point": 3, "weight": 0.15},
+            {"desc": "51% – 60%", "min": 50.01, "max": 60, "point": 2, "weight": 0.15},
+            {"desc": "61% – 70%", "min": 60.01, "max": 100, "point": 1, "weight": 0.15}
+        ],
+        "kepemilikan_rumah": [
+            {"desc": "Milik Sendiri/Pasangan", "point": 5, "weight": 0.25},
+            {"desc": "Milik Keluarga", "point": 3, "weight": 0.25},
+            {"desc": "Kontrak / Lainnya", "point": 1, "weight": 0.25}
+        ],
+        "daya_listrik": [
+            {"desc": "1300 VA", "point": 5, "weight": 0.15},
+            {"desc": "900 VA", "point": 4, "weight": 0.15},
+            {"desc": "450 VA", "point": 3, "weight": 0.15},
+            {"desc": "2200 VA", "point": 2, "weight": 0.15},
+            {"desc": "> 2200 VA", "point": 1, "weight": 0.15}
+        ],
+        "usia": [
+            {"desc": "> 40 tahun", "min": 41, "max": 100, "point": 5, "weight": 0.15},
+            {"desc": "36 – 40 tahun", "min": 36, "max": 40, "point": 4, "weight": 0.15},
+            {"desc": "31 – 35 tahun", "min": 31, "max": 35, "point": 3, "weight": 0.15},
+            {"desc": "26 – 30 tahun", "min": 26, "max": 30, "point": 2, "weight": 0.15},
+            {"desc": "< 25 tahun", "min": 0, "max": 25, "point": 1, "weight": 0.15}
+        ],
+        "status_pernikahan": [
+            {"desc": "Menikah", "point": 5, "weight": 0.15},
+            {"desc": "Cerai", "point": 3, "weight": 0.15},
+            {"desc": "Lajang", "point": 1, "weight": 0.15}
+        ],
+        "lama_tinggal": [
+            {"desc": "5 – 10 Tahun", "min": 5, "max": 100, "point": 5, "weight": 0.15},
+            {"desc": "1 – 5 Tahun", "min": 1, "max": 4.99, "point": 3, "weight": 0.15},
+            {"desc": "< 1 Tahun", "min": 0, "max": 0.99, "point": 1, "weight": 0.15}
+        ]
+    },
+    "fatal_score_config": {
+        "max_dpd": 60,
+        "max_tunggakan": 10000000,
+        "action": "Redirect to Manual Deviation"
+    },
+    "category_ranges": {
+        "umi": [
+            {"cat": "7", "min": 481, "max": 500},
+            {"cat": "6", "min": 461, "max": 480},
+            {"cat": "5", "min": 441, "max": 460},
+            {"cat": "4", "min": 421, "max": 440},
+            {"cat": "3", "min": 401, "max": 420},
+            {"cat": "2", "min": 341, "max": 400},
+            {"cat": "1", "min": 0, "max": 340}
+        ],
+        "cbi": [
+            {"cat": "6", "min": 526, "max": 1000},
+            {"cat": "5", "min": 501, "max": 525},
+            {"cat": "4", "min": 476, "max": 500},
+            {"cat": "3", "min": 451, "max": 475},
+            {"cat": "2", "min": 400, "max": 450},
+            {"cat": "1", "min": 1, "max": 399}
+        ]
+    },
+    "matrix_approval": {
+        "7": {"6": "Approve 1", "5": "Approve 1", "4": "Approve 1", "3": "Approve 1", "2": "Approve 2", "1": "Reject"},
+        "6": {"6": "Approve 1", "5": "Approve 1", "4": "Approve 1", "3": "Approve 2", "2": "Approve 2", "1": "Reject"},
+        "5": {"6": "Approve 1", "5": "Approve 1", "4": "Approve 2", "3": "Approve 2", "2": "Reject", "1": "Reject"},
+        "4": {"6": "Approve 1", "5": "Approve 2", "4": "Approve 2", "3": "Reject", "2": "Reject", "1": "Reject"},
+        "3": {"6": "Approve 2", "5": "Approve 2", "4": "Reject", "3": "Reject", "2": "Reject", "1": "Reject"},
+        "2": {"6": "Approve 2", "5": "Reject", "4": "Reject", "3": "Reject", "2": "Reject", "1": "Reject"},
+        "1": {"6": "Reject", "5": "Reject", "4": "Reject", "3": "Reject", "2": "Reject", "1": "Reject"}
+    }
+}
