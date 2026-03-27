@@ -338,4 +338,4 @@ if st.button("RUN SCORING KOSPINUS", type="primary"):
     
     st.table(df_det)
 
-st.markdown("<div class='footer-watermark'>Kospinus UMI Scoring v1.0 © Alpa Gustiana</div>", unsafe_allow_html=True)
+st.markdown("<div class='footer-watermark'>Kospinus UMI Scoring v1.0 © M.Suparman</div>", unsafe_allow_html=True)
